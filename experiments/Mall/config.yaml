@@ -1,0 +1,97 @@
+port: 22222
+random_seed: 131
+
+dataset:
+  type: custom_exemplar
+  img_dir: &img_dir ../../data/Mall/frames/
+  density_dir: ../../data/Mall/gt_density_map/
+  exemplar:
+    img_dir: *img_dir
+    meta_file: ../../data/Mall/exemplar.json
+    norm: True
+    num_exemplar: 5
+  input_size: &input_size [512, 512] # [h, w]
+  pixel_mean: [0.485, 0.456, 0.406]
+  pixel_std: [0.229, 0.224, 0.225]
+  batch_size: 1
+  workers: 4
+
+  train:
+    meta_file: ../../data/Mall/train.json
+    hflip: False
+    vflip: False
+    rotate: False
+    colorjitter: 
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+      hue: 0.1
+      prob: 0.5
+    gamma:
+      range: [0.75, 1.5]
+      prob: 0.5
+    gray: False
+  val:
+    meta_file: ../../data/Mall/test.json
+  test:
+    meta_file: ../../data/Mall/test.json
+
+criterion:
+  - name: MaskMSELoss
+    type: MaskMSELoss
+    kwargs:
+      maskpath: ../../data/Mall/mask.png
+      input_size: *input_size
+      weight: 250
+
+trainer:
+  epochs: 400
+  lr_scale_backbone: 0 # 0: frozen, 0.1: 0.1 * lr, 1: lr
+  optimizer:
+    type: Adam
+    kwargs:
+      lr: 0.00002
+  lr_scheduler:
+    type: StepLR
+    kwargs:
+      step_size: 400
+      gamma: 0.25
+
+saver:
+  auto_resume: False
+  always_save: False
+  load_path: checkpoints/ckpt_best.pth.tar
+  save_dir: checkpoints/
+  log_dir: log/
+
+evaluator:
+  save_dir: result_eval_temp
+
+visualizer:
+  vis_dir: vis/
+  img_dir: *img_dir
+  activation: sigmoid # [null, sigmoid]
+  normalization: True
+  with_image: True
+
+net:
+  builder: models.safecount_exemplar.build_network
+  kwargs:
+    block: 2
+    backbone:
+      type: resnet18
+      pretrained_model: /mnt/lustre/share/DSK/model_zoo/pytorch/imagenet/resnet18-5c106cde.pth
+      out_layers: [1, 2, 3]
+      out_stride: 4
+    pool:
+      type: max
+      size: [1, 1]
+    embed_dim: 256
+    mid_dim: 1024
+    head: 8
+    dropout: 0.0
+    activation: leaky_relu
+    exemplar_scales: []
+    initializer:
+      method: normal
+      std: 0.001
