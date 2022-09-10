@@ -38,7 +38,7 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 
 | Val MAE | Val RMSE | Test MAE | Test RMSE | Checkpoints |
 | ------ | ------ | ------ | ------ | ------ |
-|  14.42 | 51.72 | 13.56 | 91.30 |  |
+|  14.42 | 51.72 | 13.56 | 91.30 | [here](https://drive.google.com/file/d/1mbV0xJdORIpSLlMCwlgENMB9Y1kUOhk2/view?usp=sharing) |
 
 ### 1.2 FSC147 in Cross Validation Setting 
 
@@ -58,12 +58,12 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 
 - **Results and checkpoints**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance. 
 
-| Shot | Val Fold | Val MAE | Val RMSE | Checkpoints | | Shot | Val Fold | Val MAE | Val RMSE | Checkpoints |
-| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-|  1 | 0 | 15.62 | 51.20 |  |  |  3 | 0 | 13.84 | 43.99 |  |
-|  1 | 1 | 7.14  | 15.77 |  |  |  3 | 1 | 6.29  | 13.89 |  |
-|  1 | 2 | 14.05 | 92.48 |  |  |  3 | 2 | 11.19 | 86.81 |  |
-|  1 | 3 | 13.88 | 38.38 |  |  |  3 | 3 | 11.73 | 33.85 |  |
+| Shot | Val Fold | Val MAE | Val RMSE | | Shot | Val Fold | Val MAE | Val RMSE |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+|  1 | 0 | 15.62 | 51.20 | |  3 | 0 | 13.84 | 43.99 |
+|  1 | 1 | 7.14  | 15.77 | |  3 | 1 | 6.29  | 13.89 |
+|  1 | 2 | 14.05 | 92.48 | |  3 | 2 | 11.19 | 86.81 |
+|  1 | 3 | 13.88 | 38.38 | |  3 | 3 | 11.73 | 33.85 |
 
 
 ### 1.3 Class-specific Counting
@@ -74,7 +74,7 @@ The train and eval of class-specific counting are similar to FSC147. Here we onl
 | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 |     MAE     | 4.91 | 2.24 | 1.01 | 1.77 | 74.36 | 9.75 |
 |     RMSE    | 6.32 | 3.44 | 1.34 | 2.24 | 121.15 | 15.87 |
-| checkpoints |       |  |  |  |  |  |
+| checkpoints | [here](https://drive.google.com/file/d/1fp2BLG5WPNqiiM91k6kwescfLY-ZNA_T/view?usp=sharing) | [here](https://drive.google.com/file/d/12J635jZI4SXUKBBPcuwdOJrBdeC_6d_U/view?usp=sharing) | [here](https://drive.google.com/file/d/1IVjLdnJ9IgiyfvM2sDK42k_9l416aprv/view?usp=sharing) | [here](https://drive.google.com/file/d/1oUKJqbhB5GFKLtXuzshNJ7qL6npE3e3f/view?usp=sharing) | [here](https://drive.google.com/file/d/1oUKJqbhB5GFKLtXuzshNJ7qL6npE3e3f/view?usp=sharing) | [here](https://drive.google.com/file/d/1DqrUHK3hgsVfLwxNAWiYgYtORMpKoYxb/view?usp=sharing) |
 
 **1) CARPK**
 
