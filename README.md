@@ -74,7 +74,7 @@ The train and eval of class-specific counting are similar to FSC147. Here we onl
 | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 |     MAE     | 4.91 | 2.24 | 1.01 | 1.77 | 74.36 | 9.75 |
 |     RMSE    | 6.32 | 3.44 | 1.34 | 2.24 | 121.15 | 15.87 |
-| checkpoints | [here](https://drive.google.com/file/d/1fp2BLG5WPNqiiM91k6kwescfLY-ZNA_T/view?usp=sharing) | [here](https://drive.google.com/file/d/12J635jZI4SXUKBBPcuwdOJrBdeC_6d_U/view?usp=sharing) | [here](https://drive.google.com/file/d/1IVjLdnJ9IgiyfvM2sDK42k_9l416aprv/view?usp=sharing) | [here](https://drive.google.com/file/d/1oUKJqbhB5GFKLtXuzshNJ7qL6npE3e3f/view?usp=sharing) | [here](https://drive.google.com/file/d/1oUKJqbhB5GFKLtXuzshNJ7qL6npE3e3f/view?usp=sharing) | [here](https://drive.google.com/file/d/1DqrUHK3hgsVfLwxNAWiYgYtORMpKoYxb/view?usp=sharing) |
+| checkpoints | [here](https://drive.google.com/file/d/1fp2BLG5WPNqiiM91k6kwescfLY-ZNA_T/view?usp=sharing) | [here](https://drive.google.com/file/d/12J635jZI4SXUKBBPcuwdOJrBdeC_6d_U/view?usp=sharing) | [here](https://drive.google.com/file/d/1IVjLdnJ9IgiyfvM2sDK42k_9l416aprv/view?usp=sharing) | [here](https://drive.google.com/file/d/1oUKJqbhB5GFKLtXuzshNJ7qL6npE3e3f/view?usp=sharing) | [here](https://drive.google.com/file/d/1y3VgGNsQbGB5sPN98_nlOxisQ1ebnFbx/view?usp=sharing) | [here](https://drive.google.com/file/d/1DqrUHK3hgsVfLwxNAWiYgYtORMpKoYxb/view?usp=sharing) |
 
 **1) CARPK**
 
