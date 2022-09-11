@@ -171,4 +171,4 @@ The train and eval of class-specific counting are similar to FSC147. Here we onl
 | dataset | model | circumstance |
 | ------ | ------ | ------ |
 | *custom_dataset.py* | *safecount.py* | The *support images* are parts of the *query image*, and annotated by bounding boxes, *e.g.*, FSC147. |
-| *custom_exemplar_dataset.py* | *safecount_exemplar.py* | The *support images* are sampled then fixed, and not parts of the *query image*, *e.g.*, CARPK, PUCPR+, UCSD, Mall, ShanghaiTech. |
+| *custom_exemplar_dataset.py* | *safecount_exemplar.py* | The *support images* are sampled then fixed, and not parts of the *query image*, *e.g.*, CARPK, PUCPR+, UCSD, Mall, and ShanghaiTech. |
