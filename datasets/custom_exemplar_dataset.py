@@ -146,8 +146,6 @@ class CustomDataset(BaseDataset):
         density_name = meta["density"]
         density_path = os.path.join(self.density_dir, density_name)
         density = np.load(density_path)
-        # get boxes, h, w
-        boxes = meta["boxes"] if "boxes" in meta else []
         # transform
         # resize to a fix size
         if self.transform_fn:
@@ -158,7 +156,6 @@ class CustomDataset(BaseDataset):
             image = self.colorjitter_fn(image)
         image = transforms.ToTensor()(image)
         density = transforms.ToTensor()(density)
-        boxes = torch.tensor(boxes, dtype=torch.float64)
         if self.normalize_fn:
             image = self.normalize_fn(image)
         return {
@@ -167,7 +164,6 @@ class CustomDataset(BaseDataset):
             "width": width,
             "image": image,
             "density": density,
-            "boxes": boxes,
             "exemplar_imgs": self.exemplar_imgs,
             "exemplar_boxes": self.exemplar_boxes,
         }
