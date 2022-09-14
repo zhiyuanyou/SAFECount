@@ -147,7 +147,6 @@ class CustomDataset(BaseDataset):
         density_path = os.path.join(self.density_dir, density_name)
         density = np.load(density_path)
         # transform
-        # resize to a fix size
         if self.transform_fn:
             image, density, _, _ = self.transform_fn(
                 image, density, [], [], (height, width)

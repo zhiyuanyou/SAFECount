@@ -108,7 +108,7 @@ class CustomDataset(BaseDataset):
         img_path = os.path.join(self.img_dir, img_name)
         image = cv2.imread(img_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        height, width, _ = image.shape
+        height, width = image.shape[:2]
         # read density
         density_name = meta["density"]
         density_path = os.path.join(self.density_dir, density_name)
@@ -117,11 +117,10 @@ class CustomDataset(BaseDataset):
         boxes = meta["boxes"]
         if self.shot:
             boxes = boxes[:self.shot]
-        points = meta["points"]  # (x, y)
         # transform
         if self.transform_fn:
-            image, density, boxes, points = self.transform_fn(
-                image, density, boxes, points, (height, width)
+            image, density, boxes, _ = self.transform_fn(
+                image, density, boxes, [], (height, width)
             )
         if self.colorjitter_fn:
             image = self.colorjitter_fn(image)
@@ -137,5 +136,4 @@ class CustomDataset(BaseDataset):
             "image": image,
             "density": density,
             "boxes": boxes,
-            "points": points,
         }

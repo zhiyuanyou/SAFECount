@@ -96,7 +96,7 @@ class BaseTransform(object):
                 image, density, boxes_rsz, points_rsz
             )
         if self.rotate:
-            assert boxes == [] and points == []
+            assert boxes == [] and points == [], "random rotate coud only be used in custom_exemplar_dataset"
             transform_fn = T.RandomRotation(self.rotate["degrees"])
             image, density = transform_fn(image, density)
         if self.gray:
