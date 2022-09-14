@@ -1,7 +1,7 @@
 import cv2
 import torch
 import torch.nn as nn
-import pytorch_ssim
+from .pytorch_ssim import SSIM
 
 
 class _MSELoss(nn.Module):
@@ -45,7 +45,7 @@ class MaskMSELoss(nn.Module):
 class SSIMLoss(nn.Module):
     def __init__(self, window_size, outstride, weight):
         super().__init__()
-        self.criterion_ssim = pytorch_ssim.SSIM(window_size)
+        self.criterion_ssim = SSIM(window_size)
         self.outstride = outstride
         self.weight = weight
 
