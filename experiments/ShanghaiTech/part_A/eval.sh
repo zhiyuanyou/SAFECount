@@ -1,14 +1,3 @@
-#!/bin/bash
-ROOT=../../../
-export PYTHONPATH=$ROOT:$PYTHONPATH
-
-g=$(($1<8?$1:8))
-spring.submit run \
-    -p$2 \
-    -n$g \
-    --gres=gpu:$g \
-    --ntasks-per-node=$g \
-    --cpus-per-task 4 \
-    --job-name=parta \
-    --gpu \
-    "python -u ../../../tools/train_val.py -e"
+PYTHONPATH=$PYTHONPATH:../../../ \
+srun --mpi=pmi2 -p$2 -n$1 --gres=gpu:$1 --ntasks-per-node=$1 --cpus-per-task=4 --job-name=parta \
+python -u ../../../tools/train_val.py -e
