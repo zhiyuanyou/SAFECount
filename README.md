@@ -30,7 +30,7 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 
     (1) For slurm group:  `sh train.sh #NUM_GPUS #PARTITION`, `sh eval.sh #NUM_GPUS #PARTITION`, or `sh test.sh #NUM_GPUS #PARTITION`.
 
-    (2) For torch.distributed.launch: `sh train_torch.sh #NUM_GPUS`, `sh eval_torch.sh #NUM_GPUS`, or `sh test_torch.sh #NUM_GPUS`. 
+    (2) For torch.distributed.launch: `sh train_torch.sh #NUM_GPUS #GPU_IDS`, `sh eval_torch.sh #NUM_GPUS #GPU_IDS`, or `sh test_torch.sh #NUM_GPUS #GPU_IDS`, *e.g.*, train with GPU 1,3,4,6 (4 GPU in total): `sh train_torch.sh 4 1,3,4,6`.
 
     **Note**: During eval or test, please *set config.saver.load_path* to load the checkpoints. 
 
@@ -52,8 +52,8 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 
     (1) For slurm group: `sh train.sh #NUM_GPUS #PARTITION` or `sh eval.sh #NUM_GPUS #PARTITION`. 
     
-    (2) For torch.distributed.launch: `sh train_torch.sh #NUM_GPUS` or `sh eval_torch.sh #NUM_GPUS`. 
-
+    (2) For torch.distributed.launch: `sh train_torch.sh #NUM_GPUS #GPU_IDS` or `sh eval_torch.sh #NUM_GPUS #GPU_IDS`. 
+    
     **Note**: During eval or test, please *set config.saver.load_path* to load the checkpoints. 
 
 - **Results and checkpoints**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance. 
