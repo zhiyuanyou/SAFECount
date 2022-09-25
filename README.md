@@ -172,3 +172,13 @@ The train and eval of class-specific counting are similar to FSC147. Here we onl
 | ------ | ------ | ------ |
 | *custom_dataset.py* | *safecount.py* | The *support images* are parts of the *query image*, and annotated by bounding boxes, *e.g.*, FSC147. |
 | *custom_exemplar_dataset.py* | *safecount_exemplar.py* | The *support images* are sampled then fixed, and not parts of the *query image*, *e.g.*, CARPK, PUCPR+, UCSD, Mall, and ShanghaiTech. |
+
+## 3. Questions
+
+- **CUDA Out of Memory**. 
+
+  (1). Choose a smaller image size (*config.dataset.input_size*).
+  
+  (2). Set a smaller exemplar number (*config.dataset.shot* for FSC147, *config.dataset.exemplar.num_exemplar* for class-specific counting).
+  
+  (3). Set a larger out_stride (*config.net.kwargs.backbone.out_stride*), but you also need to revise the Regressor (in *models.utils.py*) to upsample the feature to the original image size. 
