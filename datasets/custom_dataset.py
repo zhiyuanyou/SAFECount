@@ -116,7 +116,7 @@ class CustomDataset(BaseDataset):
         # get boxes, h, w
         boxes = meta["boxes"]
         if self.shot:
-            boxes = boxes[:self.shot]
+            boxes = boxes[: self.shot]
         # transform
         if self.transform_fn:
             image, density, boxes, _ = self.transform_fn(

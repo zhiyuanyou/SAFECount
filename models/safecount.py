@@ -3,7 +3,7 @@ import copy
 import torch
 import torch.nn.functional as F
 from torch import nn
-from utils.init_helper import initialize_from_cfg
+
 from models.utils import (
     build_backbone,
     build_regressor,
@@ -11,6 +11,7 @@ from models.utils import (
     get_activation,
     get_clones,
 )
+from utils.init_helper import initialize_from_cfg
 
 
 class SAFECount(nn.Module):
@@ -32,7 +33,9 @@ class SAFECount(nn.Module):
         if 1 in self.exemplar_scales:
             self.exemplar_scales.remove(1)
         self.backbone = build_backbone(**backbone)
-        self.in_conv = nn.Conv2d(self.backbone.out_dim, embed_dim, kernel_size=1, stride=1)
+        self.in_conv = nn.Conv2d(
+            self.backbone.out_dim, embed_dim, kernel_size=1, stride=1
+        )
         self.safecount = SAFECountMultiBlock(
             block=block,
             pool=pool,
@@ -163,6 +166,7 @@ class SimilarityWeightedAggregation(nn.Module):
     """
     Implement the multi-head attention with convolution to keep the spatial structure.
     """
+
     def __init__(self, pool, embed_dim, head, dropout):
         super().__init__()
         assert pool.size[0] % 2 == 1 and pool.size[1] % 2 == 1
@@ -193,7 +197,9 @@ class SimilarityWeightedAggregation(nn.Module):
         query = self.in_conv(query)
         query = query.permute(0, 2, 3, 1).contiguous()
         query = self.norm(query).permute(0, 3, 1, 2).contiguous()
-        query = query.contiguous().view(self.head, self.head_dim, h_q, w_q)  # [head,c,h,w]
+        query = query.contiguous().view(
+            self.head, self.head_dim, h_q, w_q
+        )  # [head,c,h,w]
         attns_list = []
         for key in keys:
             if self.pool.type == "max":
@@ -203,7 +209,9 @@ class SimilarityWeightedAggregation(nn.Module):
             key = self.in_conv(key)
             key = key.permute(0, 2, 3, 1).contiguous()
             key = self.norm(key).permute(0, 3, 1, 2).contiguous()
-            key = key.contiguous().view(self.head, self.head_dim, h_p, w_p)  # [head,c,h,w]
+            key = key.contiguous().view(
+                self.head, self.head_dim, h_p, w_p
+            )  # [head,c,h,w]
             attn_list = []
             for q, k in zip(query, key):
                 attn = F.conv2d(F.pad(q.unsqueeze(0), pad), k.unsqueeze(0))  # [1,1,h,w]
@@ -218,7 +226,9 @@ class SimilarityWeightedAggregation(nn.Module):
         ##################################################################################
         attns = attns * float(self.embed_dim * h_p * w_p) ** -0.5  # scaling
         attns = torch.exp(attns)  # [head,n,h,w]
-        attns_sn = attns / (attns.max(dim=2, keepdim=True)[0]).max(dim=3, keepdim=True)[0]
+        attns_sn = (
+            attns / (attns.max(dim=2, keepdim=True)[0]).max(dim=3, keepdim=True)[0]
+        )
         attns_en = attns / attns.sum(dim=1, keepdim=True)
         attns = self.dropout(attns_sn * attns_en)
 
@@ -228,15 +238,21 @@ class SimilarityWeightedAggregation(nn.Module):
         feats = 0
         for idx, value in enumerate(values):
             if self.pool.type == "max":
-                value = F.adaptive_max_pool2d(value, self.pool.size, return_indices=False)
+                value = F.adaptive_max_pool2d(
+                    value, self.pool.size, return_indices=False
+                )
             else:
                 value = F.adaptive_avg_pool2d(value, self.pool.size)
             attn = attns[:, idx, :, :].unsqueeze(1)  # [head,1,h,w]
             value = self.in_conv(value)
-            value = value.contiguous().view(self.head, self.head_dim, h_p, w_p)  # [head,c,h,w]
+            value = value.contiguous().view(
+                self.head, self.head_dim, h_p, w_p
+            )  # [head,c,h,w]
             feat_list = []
             for w, v in zip(attn, value):
-                feat = F.conv2d(F.pad(w.unsqueeze(0), pad), v.unsqueeze(1).flip(2, 3))  # [1,c,h,w]
+                feat = F.conv2d(
+                    F.pad(w.unsqueeze(0), pad), v.unsqueeze(1).flip(2, 3)
+                )  # [1,c,h,w]
                 feat_list.append(feat)
             feat = torch.cat(feat_list, dim=0)  # [head,c,h,w]
             feats += feat

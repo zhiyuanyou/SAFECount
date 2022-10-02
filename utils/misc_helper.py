@@ -148,10 +148,10 @@ def load_state(path, model, optimizer=None):
 
 def set_random_seed(seed=233, reproduce=False):
     np.random.seed(seed)
-    torch.manual_seed(seed ** 2)
-    torch.cuda.manual_seed(seed ** 3)
-    random.seed(seed ** 4)
-    torch.cuda.manual_seed_all(seed ** 5)
+    torch.manual_seed(seed**2)
+    torch.cuda.manual_seed(seed**3)
+    random.seed(seed**4)
+    torch.cuda.manual_seed_all(seed**5)
 
     if reproduce:
         torch.backends.cudnn.benchmark = False

@@ -33,7 +33,7 @@ parser.add_argument(
 )
 parser.add_argument("-e", "--evaluate", action="store_true")
 parser.add_argument("-t", "--test", action="store_true")
-parser.add_argument('--local_rank', default=None, help='local rank for dist')
+parser.add_argument("--local_rank", default=None, help="local rank for dist")
 
 
 def main():

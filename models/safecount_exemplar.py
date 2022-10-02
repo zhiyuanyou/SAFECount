@@ -3,7 +3,7 @@ import copy
 import torch
 import torch.nn.functional as F
 from torch import nn
-from utils.init_helper import initialize_from_cfg
+
 from models.utils import (
     build_backbone,
     build_regressor,
@@ -11,6 +11,7 @@ from models.utils import (
     get_activation,
     get_clones,
 )
+from utils.init_helper import initialize_from_cfg
 
 
 class SAFECount(nn.Module):
@@ -36,7 +37,9 @@ class SAFECount(nn.Module):
             self.exemplar_scales.remove(1)
         self.backbone = build_backbone(**backbone)
         self.out_stride = backbone.out_stride
-        self.in_conv = nn.Conv2d(self.backbone.out_dim, embed_dim, kernel_size=1, stride=1)
+        self.in_conv = nn.Conv2d(
+            self.backbone.out_dim, embed_dim, kernel_size=1, stride=1
+        )
         self.safecount = SAFECountMultiBlock(
             block=block,
             out_stride=backbone.out_stride,
@@ -60,7 +63,9 @@ class SAFECount(nn.Module):
         for expl_scale in self.exemplar_scales:
             h_rsz = int(h * expl_scale) // 16 * 16
             w_rsz = int(w * expl_scale) // 16 * 16
-            expl_imgs_scale = F.interpolate(expl_imgs, size=(w_rsz, h_rsz), mode="bilinear")
+            expl_imgs_scale = F.interpolate(
+                expl_imgs, size=(w_rsz, h_rsz), mode="bilinear"
+            )
             expl_scale_h = h_rsz / h
             expl_scale_w = w_rsz / w
             boxes_scale = copy.deepcopy(expl_boxes)
@@ -74,11 +79,19 @@ class SAFECount(nn.Module):
         feat_boxes_list = []
         for expl_feats, expl_boxes in zip(expl_feats_list, expl_boxes_list):
             for expl_feat, expl_box in zip(expl_feats, expl_boxes):
-                feat_box = crop_roi_feat(expl_feat.unsqueeze(0), expl_box.unsqueeze(0), self.out_stride)[0]  # [1,c,h,w]
+                feat_box = crop_roi_feat(
+                    expl_feat.unsqueeze(0), expl_box.unsqueeze(0), self.out_stride
+                )[
+                    0
+                ]  # [1,c,h,w]
                 if self.pool.type == "max":
-                    feat_box = F.adaptive_max_pool2d(feat_box, self.pool.size, return_indices=False)  # [1,c,h,w]
+                    feat_box = F.adaptive_max_pool2d(
+                        feat_box, self.pool.size, return_indices=False
+                    )  # [1,c,h,w]
                 else:
-                    feat_box = F.adaptive_avg_pool2d(feat_box, self.pool.size)  # [1,c,h,w]
+                    feat_box = F.adaptive_avg_pool2d(
+                        feat_box, self.pool.size
+                    )  # [1,c,h,w]
                 feat_boxes_list.append(feat_box)
         feat_boxes = torch.cat(feat_boxes_list, dim=0)  # (m x n) x c x h x w
         feat_boxes = self.in_conv(feat_boxes)
@@ -160,6 +173,7 @@ class SimilarityWeightedAggregation(nn.Module):
     """
     Implement the multi-head attention with convolution to keep the spatial structure.
     """
+
     def __init__(self, embed_dim, head, dropout):
         super().__init__()
         self.embed_dim = embed_dim
@@ -187,14 +201,18 @@ class SimilarityWeightedAggregation(nn.Module):
         query = self.in_conv(query)
         query = query.permute(0, 2, 3, 1).contiguous()
         query = self.norm(query).permute(0, 3, 1, 2).contiguous()
-        query = query.contiguous().view(self.head, self.head_dim, h_q, w_q)  # [head,c,h,w]
+        query = query.contiguous().view(
+            self.head, self.head_dim, h_q, w_q
+        )  # [head,c,h,w]
         attns_list = []
         for key in keys:
             key = key.unsqueeze(0)
             key = self.in_conv(key)
             key = key.permute(0, 2, 3, 1).contiguous()
             key = self.norm(key).permute(0, 3, 1, 2).contiguous()
-            key = key.contiguous().view(self.head, self.head_dim, h_p, w_p)  # [head,c,h,w]
+            key = key.contiguous().view(
+                self.head, self.head_dim, h_p, w_p
+            )  # [head,c,h,w]
             attn_list = []
             for q, k in zip(query, key):
                 attn = F.conv2d(F.pad(q.unsqueeze(0), pad), k.unsqueeze(0))  # [1,1,h,w]
@@ -209,7 +227,9 @@ class SimilarityWeightedAggregation(nn.Module):
         ##################################################################################
         attns = attns * float(self.embed_dim * h_p * w_p) ** -0.5  # scaling
         attns = torch.exp(attns)  # [head,n,h,w]
-        attns_sn = attns / (attns.max(dim=2, keepdim=True)[0]).max(dim=3, keepdim=True)[0]
+        attns_sn = (
+            attns / (attns.max(dim=2, keepdim=True)[0]).max(dim=3, keepdim=True)[0]
+        )
         attns_en = attns / attns.sum(dim=1, keepdim=True)
         attns = self.dropout(attns_sn * attns_en)
 
@@ -221,10 +241,14 @@ class SimilarityWeightedAggregation(nn.Module):
             attn = attns[:, idx, :, :].unsqueeze(1)  # [head,1,h,w]
             value = value.unsqueeze(0)
             value = self.in_conv(value)
-            value = value.contiguous().view(self.head, self.head_dim, h_p, w_p)  # [head,c,h,w]
+            value = value.contiguous().view(
+                self.head, self.head_dim, h_p, w_p
+            )  # [head,c,h,w]
             feat_list = []
             for w, v in zip(attn, value):
-                feat = F.conv2d(F.pad(w.unsqueeze(0), pad), v.unsqueeze(1).flip(2, 3))  # [1,c,h,w]
+                feat = F.conv2d(
+                    F.pad(w.unsqueeze(0), pad), v.unsqueeze(1).flip(2, 3)
+                )  # [1,c,h,w]
                 feat_list.append(feat)
             feat = torch.cat(feat_list, dim=0)  # [head,c,h,w]
             feats += feat

@@ -32,8 +32,10 @@ class Visualizer(ABC):
 
     def build_activation_fn(self, activation):
         if activation == "sigmoid":
+
             def _sigmoid(x):
                 return 1 / (1 + np.exp(-x))
+
             return _sigmoid
         else:
             raise NotImplementedError
@@ -73,18 +75,8 @@ class Visualizer(ABC):
         heights, widths = input["height"], input["width"]
         densities = input["density"]
         outputs = input["density_pred"]
-        for (
-            filename,
-            height,
-            width,
-            density,
-            output
-        ) in zip(
-            filenames,
-            heights,
-            widths,
-            densities,
-            outputs
+        for (filename, height, width, density, output) in zip(
+            filenames, heights, widths, densities, outputs
         ):
             filename_, _ = os.path.splitext(filename)
             cnt_gt = int(density.sum().round())
