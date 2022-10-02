@@ -34,15 +34,15 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 
     **Note**: During eval or test, please *set config.saver.load_path* to load the checkpoints. 
 
-- **Results and checkpoints**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance.
+- **Results and checkpoints**. 
 
-| Val MAE | Val RMSE | Test MAE | Test RMSE | Checkpoints |
-| ------ | ------ | ------ | ------ | ------ |
-|  14.42 | 51.72 | 13.56 | 91.30 | [here](https://drive.google.com/file/d/1mbV0xJdORIpSLlMCwlgENMB9Y1kUOhk2/view?usp=sharing) |
+| Platform | Val MAE | Val RMSE | Test MAE | Test RMSE | Checkpoints |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| 8 GPUs (NVIDIA Tesla V100 16GB) |  14.42 | 51.72 | 13.56 | 91.30 | [here](https://drive.google.com/file/d/1mbV0xJdORIpSLlMCwlgENMB9Y1kUOhk2/view?usp=sharing) |
 
 ### 1.2 FSC147 in Cross Validation Setting 
 
-**Note**: here we provide one example (3 shot, fold0 as val set), and the others are similar. 
+Here we provide one example (3 shot, fold0 as val set), and others are similar. 
 
 - **Create the FSC147 dataset directory**, the same as in **1.1**. 
 
@@ -56,7 +56,7 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
     
     **Note**: During eval or test, please *set config.saver.load_path* to load the checkpoints. 
 
-- **Results and checkpoints**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance. 
+- **Results**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance. 
 
 | Shot | Val Fold | Val MAE | Val RMSE | | Shot | Val Fold | Val MAE | Val RMSE |
 | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
@@ -65,8 +65,19 @@ Official PyTorch Implementation of [Few-shot Object Counting with Similarity-Awa
 |  1 | 2 | 14.05 | 92.48 | |  3 | 2 | 11.19 | 86.81 |
 |  1 | 3 | 13.88 | 38.38 | |  3 | 3 | 11.73 | 33.85 |
 
+### 1.3 Cross-dataset Generalization (*FSC147 to CARPK*)
 
-### 1.3 Class-specific Counting
+- **cd the experiment directory** by running `cd experiments/FSC147_to_CARPK/`. 
+
+- **Pretrain, finetune, or eval**. The pretrain, finetune, or eval are similar to FSC147. 
+
+- **Results**. Training on 8 GPUs (NVIDIA Tesla V100 16GB) results in following performance. 
+
+| MAE (pretrain on FSC147) | RMSE (pretrain on FSC147) | MAE (finetune on CARPK) | RMSE (finetune on CARPK) |
+| ------ | ------ | ------ | ------ |
+|  17.78 | 20.95 | 4.91 | 6.32 |
+
+### 1.4 Class-specific Counting
 
 The train and eval of class-specific counting are similar to FSC147. Here we only provide **the construction of the dataset directory**. The checkpoints (trained on 8 NVIDIA Tesla V100 16GB GPUs) and the corresponding results are given. 
 
@@ -166,12 +177,13 @@ The train and eval of class-specific counting are similar to FSC147. Here we onl
 
 ## 2. Learn More About Our Methods
 
-- We provide two datasets: *custom_dataset.py* & *custom_exemplar_dataset.py*, and two models: *safecount.py* & *safecount_exemplar.py*. They should be cooperated and used as follows. 
+- We provide two datasets: *custom_dataset.py* & *custom_exemplar_dataset.py*, and three models: *safecount.py*, *safecount_exemplar.py*, & *safecount_crossdataset.py*. They should be cooperated and used as follows. 
 
 | dataset | model | circumstance |
 | ------ | ------ | ------ |
 | *custom_dataset.py* | *safecount.py* | The *support images* are parts of the *query image*, and annotated by bounding boxes, *e.g.*, FSC147. |
 | *custom_exemplar_dataset.py* | *safecount_exemplar.py* | The *support images* are sampled then fixed, and not parts of the *query image*, *e.g.*, CARPK, PUCPR+, UCSD, Mall, and ShanghaiTech. |
+| *custom_dataset.py* | *safecount_crossdataset.py* | In *cross-dataset generalization*, pretraining a model on FSC147 and finetuning on *class-specific counting*. |
 
 ## 3. Questions
 
