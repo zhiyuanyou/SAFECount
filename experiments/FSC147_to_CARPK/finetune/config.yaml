@@ -46,7 +46,7 @@ criterion:
       weight: 250
 
 trainer:
-  epochs: 100
+  epochs: 200
   lr_scale_backbone: 0 # 0: frozen, 0.1: 0.1 * lr, 1: lr
   optimizer:
     type: Adam
@@ -55,7 +55,7 @@ trainer:
   lr_scheduler:
     type: StepLR
     kwargs:
-      step_size: 100
+      step_size: 200
       gamma: 0.25
 
 saver:
@@ -82,7 +82,6 @@ net:
     block: 2
     backbone:
       type: resnet18
-      pretrained_model: /mnt/lustre/share/DSK/model_zoo/pytorch/imagenet/resnet18-5c106cde.pth
       out_layers: [1, 2, 3]
       out_stride: 4
     pool:
