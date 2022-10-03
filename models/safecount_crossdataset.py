@@ -57,7 +57,7 @@ class SAFECount(nn.Module):
         image = input["image"]  # [1,c,h,w]
         assert image.shape[0] == 1, "Batch size must be 1!"
         boxes = input["boxes"].squeeze(0)  # [1,m,4] -> [m,4]
-        feat = self.in_conv(self.backbone(image))
+        feat = self.backbone(image)
         # single-scale exemplars
         feat_boxes_list = []
         feat_boxes = crop_roi_feat(
@@ -84,7 +84,7 @@ class SAFECount(nn.Module):
             boxes_scale[:, 1] *= scale_w
             boxes_scale[:, 2] *= scale_h
             boxes_scale[:, 3] *= scale_w
-            feat_scale = self.in_conv(self.backbone(image_scale))
+            feat_scale = self.backbone(image_scale)
             feat_boxes = crop_roi_feat(
                 feat_scale, boxes_scale, self.out_stride
             )  # list of [1,c,h,w], len=m
@@ -99,6 +99,9 @@ class SAFECount(nn.Module):
                     )  # [1,c,h,w]
                 feat_boxes_list.append(feat_box)
         feat_boxes = torch.cat(feat_boxes_list, dim=0)  # [m(n+1),c,h,w]
+        feat_boxes = self.in_conv(feat_boxes)
+        # image
+        feat = self.in_conv(feat)
         # count
         output = self.safecount(feat=feat, feat_boxes=feat_boxes)
         density_pred = self.count_regressor(output)
