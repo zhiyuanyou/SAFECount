@@ -67,6 +67,8 @@ Here we provide one example (3 shot, fold0 as val set), and others are similar.
 
 ### 1.3 Cross-dataset Generalization (*FSC147 to CARPK*)
 
+- **Create the FSC147 & CARPK dataset directory**, the same as in **1.1** & **1.4**. 
+
 - **cd the experiment directory** by running `cd experiments/FSC147_to_CARPK/`. 
 
 - **Pretrain, finetune, or eval**. The pretrain, finetune, or eval are similar to FSC147. 
