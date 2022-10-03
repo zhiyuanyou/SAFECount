@@ -58,10 +58,22 @@ class SAFECount(nn.Module):
         assert image.shape[0] == 1, "Batch size must be 1!"
         boxes = input["boxes"].squeeze(0)  # [1,m,4] -> [m,4]
         feat = self.in_conv(self.backbone(image))
+        # single-scale exemplars
+        feat_boxes_list = []
+        feat_boxes = crop_roi_feat(
+            feat, boxes, self.out_stride
+        )  # list of [1,c,h,w], len=m
+        for feat_box in feat_boxes:
+            if self.pool.type == "max":
+                feat_box = F.adaptive_max_pool2d(
+                    feat_box, self.pool.size, return_indices=False
+                )  # [1,c,h,w]
+            else:
+                feat_box = F.adaptive_avg_pool2d(feat_box, self.pool.size)  # [1,c,h,w]
+            feat_boxes_list.append(feat_box)
         # multi-scale exemplars
         _, _, h, w = image.shape
-        feat_boxes_list = []
-        for scale in self.exemplar_scales:  # len = n
+        for scale in self.exemplar_scales:  # len=n
             h_rsz = int(h * scale) // 16 * 16
             w_rsz = int(w * scale) // 16 * 16
             image_scale = F.interpolate(image, size=(w_rsz, h_rsz), mode="bilinear")
@@ -72,7 +84,7 @@ class SAFECount(nn.Module):
             boxes_scale[:, 1] *= scale_w
             boxes_scale[:, 2] *= scale_h
             boxes_scale[:, 3] *= scale_w
-            feat_scale = self.backbone(image_scale)
+            feat_scale = self.in_conv(self.backbone(image_scale))
             feat_boxes = crop_roi_feat(
                 feat_scale, boxes_scale, self.out_stride
             )  # list of [1,c,h,w], len=m
@@ -86,8 +98,7 @@ class SAFECount(nn.Module):
                         feat_box, self.pool.size
                     )  # [1,c,h,w]
                 feat_boxes_list.append(feat_box)
-        feat_boxes = torch.cat(feat_boxes_list, dim=0)  # [mn,c,h,w]
-        feat_boxes = self.in_conv(feat_boxes)
+        feat_boxes = torch.cat(feat_boxes_list, dim=0)  # [m(n+1),c,h,w]
         # count
         output = self.safecount(feat=feat, feat_boxes=feat_boxes)
         density_pred = self.count_regressor(output)
