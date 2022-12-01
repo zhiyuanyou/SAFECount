@@ -77,7 +77,6 @@ net:
     block: 4
     backbone:
       type: resnet18
-      pretrained_model: /mnt/lustre/share/DSK/model_zoo/pytorch/imagenet/resnet18-5c106cde.pth
       out_layers: [1, 2, 3]
       out_stride: 4
     pool:
