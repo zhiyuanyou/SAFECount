@@ -62,7 +62,7 @@ class SAFECount(nn.Module):
         for scale in self.exemplar_scales:
             h_rsz = int(h * scale) // 16 * 16
             w_rsz = int(w * scale) // 16 * 16
-            image_scale = F.interpolate(image, size=(w_rsz, h_rsz), mode="bilinear")
+            image_scale = F.interpolate(image, size=(h_rsz, w_rsz), mode="bilinear")
             scale_h = h_rsz / h
             scale_w = w_rsz / w
             boxes_scale = copy.deepcopy(boxes)
